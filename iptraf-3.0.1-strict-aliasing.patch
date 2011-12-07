@@ -1,0 +1,35 @@
+diff -up iptraf-3.0.1/src/hostmon.c.strict-aliasing iptraf-3.0.1/src/hostmon.c
+--- iptraf-3.0.1/src/hostmon.c.strict-aliasing	2007-09-25 11:18:56.000000000 +0200
++++ iptraf-3.0.1/src/hostmon.c	2010-05-27 11:35:22.055589119 +0200
+@@ -916,22 +916,19 @@ void hostmon(const struct OPTIONS *optio
+ 
+                 if ((linktype == LINK_ETHERNET) || (linktype == LINK_PLIP)
+                     || (linktype == LINK_VLAN)) {
+-                    memcpy(scratch_saddr,
+-                           ((struct ethhdr *) buf)->h_source, ETH_ALEN);
+-                    memcpy(scratch_daddr, ((struct ethhdr *) buf)->h_dest,
+-                           ETH_ALEN);
++                    struct ethhdr *eth_hdr = (struct ethhdr*) buf;
++                    memcpy(scratch_saddr, eth_hdr->h_source, ETH_ALEN);
++                    memcpy(scratch_daddr, eth_hdr->h_dest, ETH_ALEN);
+                     list = &elist;
+                 } else if (linktype == LINK_FDDI) {
+-                    memcpy(scratch_saddr, ((struct fddihdr *) buf)->saddr,
+-                           FDDI_K_ALEN);
+-                    memcpy(scratch_daddr, ((struct fddihdr *) buf)->daddr,
+-                           FDDI_K_ALEN);
++                    struct fddihdr *fddi_hdr = (struct fddihdr*) buf;
++                    memcpy(scratch_saddr, fddi_hdr->saddr, FDDI_K_ALEN);
++                    memcpy(scratch_daddr, fddi_hdr->daddr, FDDI_K_ALEN);
+                     list = &flist;
+                 } else if (linktype == LINK_TR) {
+-                    memcpy(scratch_saddr, ((struct trh_hdr *) buf)->saddr,
+-                           TR_ALEN);
+-                    memcpy(scratch_daddr, ((struct trh_hdr *) buf)->daddr,
+-                           TR_ALEN);
++                    struct trh_hdr *hdr_trh = (struct trh_hdr*) buf;
++                    memcpy(scratch_saddr, hdr_trh->saddr, TR_ALEN);
++                    memcpy(scratch_daddr, hdr_trh->daddr, TR_ALEN);
+                     list = &flist;
+                 }
+ 
